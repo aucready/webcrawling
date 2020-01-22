@@ -1,7 +1,31 @@
 import requests
 from bs4 import BeautifulSoup
+import time
+import json
 
 
+
+kakao_torken = 'xFCVqnT4VvQ3cYKFUjWls9YeJGsW0e-Z5mK3YwopcFEAAAFvzjrHVg'
+
+
+def send_kakako(text):
+    header = {'Authorization': 'Bearer ' + kakao_torken}
+    url =  "https://kapi.kakao.com/v2/api/talk/memo/default/send"
+    post =  {
+            "object_type": "text",
+            "text": text,
+            "link": {
+                "web_url": "https://developers.kakao.com",
+                "mobile_web_url": "https://developers.kakao.com"
+            },
+            "button_title": "바로 확인"
+    }
+
+    data = {'template_object': json.dumps(post)}
+
+    r = requests.post(url, headers=header, data=data)
+
+    print(r.text)
 
 def hot_deal(keyword):
     url = 'https://slickdeals.net/newsearch.php?src=SearchBarV2&q={}&pp=20'.format(keyword)
@@ -30,11 +54,30 @@ def hot_deal(keyword):
 
     return result
 
+send_list = []
 
-collect_data = hot_deal('macbook')
+def main():
+    keyword = 'ipad+pro'
+    max_price = 2000.0
+    min_price = 90.0
+    while True:
+        result = hot_deal(keyword)
+        if result is not None:
+            for r in result:
+                title, href, price, hot = r
+                if min_price < price < max_price:
+                    if hot == 1:
+                        if title not in send_list:
+                            msg = '{}-hot. {} {} {} '.format(hot, price, title, href)
+                            send_kakako(msg)
+                            send_list.append(title)
 
-for coll in collect_data:
-    print(coll)
+        time.sleep(60 * 5)
+
+
+main()
+
+
 
 
 
