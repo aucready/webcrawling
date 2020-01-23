@@ -45,7 +45,8 @@ def hot_deal(keyword):
         title = link.text
 
         price = r.select('span.price')[0].text.replace('$', '').replace('from', '').replace(',','').strip()
-        if price.find('/') >= 0 or price.find('to') > 0 or price == '':
+        if price.find('/') >= 0 or price.find('to') > 0 or price == '' or price.find('Each') > 0:
+
             continue
         price = float(price)
 
@@ -57,7 +58,7 @@ def hot_deal(keyword):
 send_list = []
 
 def main():
-    keyword = 'ipad+pro'
+    keyword = 'ipad'
     max_price = 2000.0
     min_price = 90.0
     while True:
